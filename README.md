@@ -1,0 +1,2 @@
+# f5.transparent_kerberos_auth_or_apm_authentication
+Transparent Kerberos Authentication or fallback to APM authentication
