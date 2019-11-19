@@ -92,7 +92,6 @@ worker.postMessage('/kerberos/test/'); // Send filename to our worker.
 
 when HTTP_REQUEST {
     set request [HTTP::uri]
-    set first_request 0
 
     if { [HTTP::cookie exists "DOMAINJOINED"] && [HTTP::cookie "DOMAINJOINED"] == 1 } {
         ACCESS::disable
@@ -112,7 +111,6 @@ when HTTP_REQUEST {
     switch $domainjoined {
        "false" {
             ACCESS::enable
-            #set first_request 0
             HTTP::uri [string map {"?domainjoined=false" ""} [HTTP::uri]]
             HTTP::uri [string map {"&domainjoined=false" ""} [HTTP::uri]]
             HTTP::respond 302 Location [HTTP::uri] Set-Cookie "DOMAINJOINED=0;expires=$formated_time;path=/;secure"
@@ -120,7 +118,6 @@ when HTTP_REQUEST {
         }
         "true" {
             ACCESS::disable
-            #set first_request 0
             HTTP::uri [string map {"?domainjoined=true" ""} [HTTP::uri]]
             HTTP::uri [string map {"&domainjoined=true" ""} [HTTP::uri]]
             HTTP::respond 302 Location [HTTP::uri] Set-Cookie "DOMAINJOINED=1;expires=$formated_time;path=/;secure"
@@ -148,15 +145,10 @@ when HTTP_REQUEST {
         }
     }
     
-    set first_request 1
     if { ( [HTTP::cookie exists MRHSession] ) and ( [ACCESS::session exists -state_allow [HTTP::cookie value MRHSession]] ) } {
         ACCESS::enable
-        set first_request 0
     }
-}
-
-when HTTP_RESPONSE {
-    if { ( $first_request == 1 ) } {
+    else {
         set content "$static::html_start var url = '$request'; $static::html_end"
         HTTP::respond 200 content $content
     }
