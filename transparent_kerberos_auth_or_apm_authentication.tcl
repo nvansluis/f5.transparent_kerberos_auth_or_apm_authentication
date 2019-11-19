@@ -91,7 +91,6 @@ worker.postMessage('/kerberos/test/'); // Send filename to our worker.
 }
 
 when HTTP_REQUEST {
-    set request [HTTP::uri]
 
     if { [HTTP::cookie exists "DOMAINJOINED"] && [HTTP::cookie "DOMAINJOINED"] == 1 } {
         ACCESS::disable
@@ -149,7 +148,7 @@ when HTTP_REQUEST {
         ACCESS::enable
     }
     else {
-        set content "$static::html_start var url = '$request'; $static::html_end"
+        set content "$static::html_start var url = '[HTTP::uri]'; $static::html_end"
         HTTP::respond 200 content $content
     }
 }
