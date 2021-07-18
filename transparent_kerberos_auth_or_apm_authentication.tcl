@@ -21,11 +21,12 @@ self.addEventListener('message', function(e) {
 
 		if(typeof XMLHttpRequest !== 'undefined') xhr = new XMLHttpRequest();
 		else {
-			var versions = ["MSXML2.XmlHttp.5.0", 
-			 				"MSXML2.XmlHttp.4.0",
-			 			    "MSXML2.XmlHttp.3.0", 
-			 			    "MSXML2.XmlHttp.2.0",
-			 				"Microsoft.XmlHttp"]
+			var versions = ["MSXML2.XmlHttp.6.0",
+                                        "MSXML2.XmlHttp.5.0", 
+                                        "MSXML2.XmlHttp.4.0",
+                                        "MSXML2.XmlHttp.3.0", 
+                                        "MSXML2.XmlHttp.2.0",
+			 	        "Microsoft.XmlHttp"]
 
 			 for(var i = 0, len = versions.length; i < len; i++) {
 			 	try {
@@ -53,6 +54,7 @@ self.addEventListener('message', function(e) {
 			}			
 		}
 		xhr.open('GET', url, true);
+                xhr.withCredentials = true;
 		xhr.send('');
 	}
 }
@@ -129,7 +131,7 @@ when HTTP_REQUEST {
 
     switch [HTTP::uri] {
         "/worker.js" {
-            HTTP::respond 200 content $static::webworker_task
+            HTTP::respond 200 content $static::webworker_task Content-Type "application/javascript" "Access-Control-Allow-Credentials" "true"
             return
         }
         "/kerberos/test/" {
